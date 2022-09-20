@@ -1,5 +1,0 @@
-https://developers.google.com/oauthplayground/?code=4/0AdQt8qgC3ycR9t0eHz6vHsiN58R0QoMrTCmLGyuvy65CXdC4HmC3S2VtWRKbU0l2u_ixKQ&scope=https://mail.google.com/
-
-
-
-https://console.cloud.google.com/apis/credentials?organizationId=0&project=authentication-361509
