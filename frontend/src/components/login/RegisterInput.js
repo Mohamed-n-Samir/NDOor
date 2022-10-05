@@ -1,46 +1,40 @@
 import { ErrorMessage, useField } from "formik";
 import { useMediaQuery } from "react-responsive";
 
-const RegisterInput = ({ bottom, ...props }) => {
+const RegisterInput = ({ ...props }) => {
 	const [field, meta] = useField(props);
-	const desktopView = useMediaQuery({
-		query: "(min-width: 850px)",
+	// const view1 = useMediaQuery({
+	// 	query: "(min-width: 539px)",
+	// });
+	// const view2 = useMediaQuery({
+	// 	query: "(min-width: 850px)",
+	// });
+	const view3 = useMediaQuery({
+		query: "(min-width: 1170px)",
 	});
 	// console.log(desktopView)
 	return (
 		<div className="input_wrap">
-			{meta.touched && meta.error && !bottom && (
-				<div
-					className={
-						desktopView ? "input_error input_error_desktop" : "input_error"
-					}
-				>
-					{meta.touched && meta.error && <ErrorMessage name={field.name} />}
-					{meta.touched && meta.error && (
-						<div
-							className={
-								desktopView ? "error_arrow_desktop" : "error_arrow_top"
-							}
-						></div>
-					)}
-				</div>
-			)}
 			<input
 				className={meta.touched && meta.error ? "input_error_border" : ""}
 				{...field}
 				{...props}
+
 			/>
-			{meta.touched && meta.error && bottom && (
+			{meta.touched && meta.error && (
 				<div
-					className={
-						desktopView ? "input_error input_error_desktop" : "input_error"
-					}
+					className={view3 ? "input_error input_error_desktop" : "input_error"}
+					style={{ left: view3 && field.name === "last_name" && "12rem" }}
 				>
 					{meta.touched && meta.error && <ErrorMessage name={field.name} />}
 					{meta.touched && meta.error && (
 						<div
 							className={
-								desktopView ? "error_arrow_desktop" : "error_arrow_bottom"
+								view3 && field.name !== "last_name"
+									? "error_arrow_desktop"
+									: view3 && field.name === "last_name"
+									? "error_arrow_right"
+									: "error_arrow_bottom"
 							}
 						></div>
 					)}
@@ -49,7 +43,7 @@ const RegisterInput = ({ bottom, ...props }) => {
 			{meta.touched && meta.error && (
 				<i
 					className="error_icon"
-					style={{ top: `${!bottom && !desktopView ? "62%" : "15px"}` }}
+					// style={{ top: `${!bottom && !desktopView ? "62%" : "15px"}` }}
 				></i>
 			)}
 		</div>

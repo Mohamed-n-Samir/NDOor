@@ -8,7 +8,7 @@ const Login = () => {
 		<div className="login">
 			<div className="login_wrapper">
 				<LoginForm />
-				{/* <RegisterForm/> */}
+				<RegisterForm/>
 				<Footer/>
 			</div>
 		</div>
