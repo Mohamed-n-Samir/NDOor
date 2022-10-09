@@ -26,11 +26,13 @@ const register = async (req, res) => {
 			gender,
 		} = await req.body;
 
+		// console.log(email,password,firstName,lastName,username)
+
 		if (!validateEmail(email))
 			return res.status(400).json({ error: "invalid email" });
 		const checkedEmail = await User.findOne({ email });
 		let newUsername;
-		if (username === "") {
+		if (username === undefined || username === "") {
 			const tempUsername = firstName + lastName;
 			newUsername = await genUsername(tempUsername);
 		} else {
@@ -81,9 +83,7 @@ const register = async (req, res) => {
 			},
 			"30m"
 		);
-		const url = `${process.env.BASE_URL}/activate/${emailverificationToken}`;
-		sendverificationEmail(user.email, user.firstName, url);
-		console.log(emailverificationToken);
+		// console.log(emailverificationToken);
 		const token = await generateToken({ id: user._id.toString() }, "7d");
 		res.send({
 			id: user._id,
@@ -95,6 +95,8 @@ const register = async (req, res) => {
 			verified: user.verified,
 			message: "Register Success! please activate your email to start",
 		});
+		const url = `${process.env.BASE_URL}/activate/${emailverificationToken}`;
+		sendverificationEmail(user.email, user.firstName, url);
 		// res.json(user);
 	} catch (err) {
 		console.log(err);

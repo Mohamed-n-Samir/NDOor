@@ -19,20 +19,19 @@ const RegisterInput = ({ ...props }) => {
 				className={meta.touched && meta.error ? "input_error_border" : ""}
 				{...field}
 				{...props}
-
 			/>
 			{meta.touched && meta.error && (
 				<div
 					className={view3 ? "input_error input_error_desktop" : "input_error"}
-					style={{ left: view3 && field.name === "last_name" && "12rem" }}
+					style={{ left: view3 && field.name === "lastName" && "12rem" }}
 				>
 					{meta.touched && meta.error && <ErrorMessage name={field.name} />}
 					{meta.touched && meta.error && (
 						<div
 							className={
-								view3 && field.name !== "last_name"
+								view3 && field.name !== "lastName"
 									? "error_arrow_desktop"
-									: view3 && field.name === "last_name"
+									: view3 && field.name === "lastName"
 									? "error_arrow_right"
 									: "error_arrow_bottom"
 							}

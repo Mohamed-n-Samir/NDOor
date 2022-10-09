@@ -2,12 +2,15 @@ import { Formik, Form } from "formik";
 import RegisterInput from "./RegisterInput";
 import { useState } from "react";
 import * as Yup from "yup";
-
+import DateOfBirthSelect from "./DateOfBirthSelect";
+import GenderSelect from "./GenderSelect";
+import DotLoader from "react-spinners/DotLoader";
+import axios from "axios";
 
 const RegisterForm = () => {
 	const userInfo = {
-		first_name: "",
-		last_name: "",
+		firstName: "",
+		lastName: "",
 		email: "",
 		password: "",
 		bYear: new Date().getFullYear(),
@@ -17,28 +20,28 @@ const RegisterForm = () => {
 	};
 
 	const [user, setUser] = useState(userInfo);
-	const { first_name, last_name, email, password, bYear, bMonth, bDay, gender } = user;
-const registerValidation = Yup.object({
-	first_name: Yup.string()
-		.required("What's your First name ?")
-		.min(2, "Fisrt name must be between 2 and 16 characters.")
-		.max(16, "Fisrt name must be between 2 and 16 characters.")
-		.matches(/^[aA-zZ]+$/, "Numbers and special characters are not allowed."),
-	last_name: Yup.string()
-		.required("What's your Last name ?")
-		.min(2, "Last name must be between 2 and 16 characters.")
-		.max(16, "Last name must be between 2 and 16 characters.")
-		.matches(/^[aA-zZ]+$/, "Numbers and special characters are not allowed."),
-	email: Yup.string()
-		.required("You'll need this when you log in and if you ever need to reset your password.")
-		.email("Enter a valid email address."),
-	password: Yup.string()
-		.required(
-			"Enter a combination of at least six numbers,letters and punctuation marks(such as ! and &)."
-		)
-		.min(6, "Password must be atleast 6 characters.")
-		.max(36, "Password can't be more than 36 characters"),
-});
+	const { firstName, lastName, email, password, bYear, bMonth, bDay, gender } = user;
+	const registerValidation = Yup.object({
+		firstName: Yup.string()
+			.required("What's your First name ?")
+			.min(2, "Fisrt name must be between 2 and 16 characters.")
+			.max(16, "Fisrt name must be between 2 and 16 characters.")
+			.matches(/^[aA-zZ]+$/, "Numbers and special characters are not allowed."),
+		lastName: Yup.string()
+			.required("What's your Last name ?")
+			.min(2, "Last name must be between 2 and 16 characters.")
+			.max(16, "Last name must be between 2 and 16 characters.")
+			.matches(/^[aA-zZ]+$/, "Numbers and special characters are not allowed."),
+		email: Yup.string()
+			.required("You'll need this when you log in and if you ever need to reset your password.")
+			.email("Enter a valid email address."),
+		password: Yup.string()
+			.required(
+				"Enter a combination of at least six numbers,letters and punctuation marks(such as ! and &)."
+			)
+			.min(6, "Password must be atleast 6 characters.")
+			.max(36, "Password can't be more than 36 characters"),
+	});
 
 	// console.log(user);
 	const tempYear = new Date().getFullYear();
@@ -60,6 +63,35 @@ const registerValidation = Yup.object({
 		const { name, value } = e.target;
 		setUser({ ...user, [name]: value });
 	};
+	const [dateError, setDateError] = useState("");
+	const [genderError, setGenderError] = useState("");
+
+	const [error, setError] = useState("");
+	const [success, setsuccess] = useState("");
+	const [loading, setloading] = useState(false);
+	const registerSubmit = async () => {
+		try {
+			setloading(true);
+			const { data } = await axios.post(`http://localhost:8000/register`, {
+				firstName,
+				lastName,
+				email,
+				password,
+				bYear,
+				bMonth,
+				bDay,
+				gender,
+			});
+			console.log(data)
+			setError("");
+			setsuccess(data.message);
+			setloading(false);
+		} catch (error) {
+			setloading(false);
+			setsuccess("");
+			setError(error.response.data.message);
+		}
+	};
 
 	return (
 		<div className="blur">
@@ -68,23 +100,29 @@ const registerValidation = Yup.object({
 					<i className="exit_icon"></i>
 					<span>Sign Up</span>
 					<span>It's quick and easy</span>
+
 				</div>
 				<Formik
 					enableReinitialize
-					initialValues={{first_name, last_name, email, password, bYear, bMonth, bDay, gender}}
-					
+					initialValues={{ firstName, lastName, email, password, bYear, bMonth, bDay, gender,username:"" }}
 					validationSchema={registerValidation}
-
 					onSubmit={() => {
 						let currentDate = new Date();
-						let pickedDate = new Date(bYear,bMonth - 1,bDay);
-						let checkAge = (currentDate - pickedDate)/1000/60/60/24/365
-						console.log(checkAge)
-						if(!(checkAge >= 14 && checkAge <= 70)) {
-							console.log("you'r out of age range [14,70]")
+						let pickedDate = new Date(bYear, bMonth - 1, bDay);
+						let checkAge = (currentDate - pickedDate) / 1000 / 60 / 60 / 24 / 365;
+						console.log(checkAge);
+						if (!(checkAge >= 14 && checkAge <= 70)) {
+							setDateError(
+								"it looks like you've entered wrong info. Please make sure that you use your real date of birth."
+							);
+							if (gender === "") {
+								setGenderError("Please choose a gender. you can change who can see this later.");
+							}
+						} else {
+							setDateError("");
+							setGenderError("");
+							registerSubmit();
 						}
-
-
 					}}
 				>
 					{(formik) => (
@@ -93,13 +131,13 @@ const registerValidation = Yup.object({
 								<RegisterInput
 									type="text"
 									placeholder="First name"
-									name="first_name"
+									name="firstName"
 									onChange={handleRegisterChange}
 								/>
 								<RegisterInput
 									type="text"
 									placeholder="Surname"
-									name="last_name"
+									name="lastName"
 									onChange={handleRegisterChange}
 								/>
 							</div>
@@ -119,77 +157,17 @@ const registerValidation = Yup.object({
 									onChange={handleRegisterChange}
 								/>
 							</div>
-							<div className="reg_col">
-								<div className="reg_line_header">
-									Date of birth <i className="info_icon"></i>
-								</div>
-								<div className="reg_grid">
-									<select name="bDay" value={bDay} onChange={handleRegisterChange}>
-										{days.map((day, index) => {
-											return (
-												<option value={day} key={index}>
-													{day}
-												</option>
-											);
-										})}
-									</select>
-									<select name="bMonth" value={bMonth} onChange={handleRegisterChange}>
-										{months.map((month, index) => {
-											return (
-												<option value={month} key={index}>
-													{month}
-												</option>
-											);
-										})}
-									</select>
-									<select name="bYear" value={bYear} onChange={handleRegisterChange}>
-										{years.map((year, index) => {
-											return (
-												<option value={year} key={index}>
-													{year}
-												</option>
-											);
-										})}
-									</select>
-								</div>
-							</div>
-							<div className="reg_col">
-								<div className="reg_line_header">
-									Gender <i className="info_icon"></i>
-								</div>
-								<div className="reg_grid">
-									<label htmlFor="male">
-										Male
-										<input
-											type="radio"
-											name="gender"
-											id="male"
-											value="male"
-											onChange={handleRegisterChange}
-										/>
-									</label>
-									<label htmlFor="female">
-										Female
-										<input
-											type="radio"
-											name="gender"
-											id="female"
-											value="female"
-											onChange={handleRegisterChange}
-										/>
-									</label>
-									<label htmlFor="custom">
-										custom
-										<input
-											type="radio"
-											name="gender"
-											id="custom"
-											value="custom"
-											onChange={handleRegisterChange}
-										/>
-									</label>
-								</div>
-							</div>
+							<DateOfBirthSelect
+								bDay={bDay}
+								bMonth={bMonth}
+								bYear={bYear}
+								months={months}
+								days={days}
+								years={years}
+								handleRegisterChange={handleRegisterChange}
+								dateError={dateError}
+							/>
+							<GenderSelect genderError={genderError} handleRegisterChange={handleRegisterChange} />
 							<div className="reg_infos">
 								By clicking Sign Up, you agree to Our("")
 								<span>Terms, Data Policy &nbsp;</span>
@@ -197,8 +175,19 @@ const registerValidation = Yup.object({
 								opt ut at any time.
 							</div>
 							<div className="reg_btn_wrapper">
-								<button type="submit" className="blue_btn open_signup">Sign Up</button>
+								<button type="submit" className="blue_btn open_signup">
+									Sign Up
+								</button>
 							</div>
+							<DotLoader
+								color="#1875f2"
+								loading={loading}
+								cssOverride=""
+								size={60}
+								aria-label="Loading Spinner"
+							/>
+							{error && <div className="error_text">{error}</div>}
+							{success && <div style={{color: "green"}}>{success}</div>}
 						</Form>
 					)}
 				</Formik>

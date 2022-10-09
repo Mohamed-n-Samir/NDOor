@@ -245,12 +245,25 @@
 /*----error and success styles -------*/
 
 /*----Media queries--------------*/
+
+@media (min-width: 0px) {
+	.register {
+		top: 70%;
+	}
+}
+@media (min-width: 1170px) {
+	.register {
+		top: 50% !important;
+	}
+}
+
 @media (min-width: 539px) {
 	.login_footer_wrap {
 		max-width: 520px;
 	}
 	.register {
 		width: 400px;
+		top: 60%;
 	}
 	.reg_line {
 		flex-direction: row;
@@ -348,7 +361,7 @@
 	position: absolute;
 	width: 300px;
 	left: -19.5rem;
-	top: -3px;
+	top: -11px;
 }
 
 .error_arrow_top {
@@ -393,6 +406,15 @@
 	border-bottom: 10px solid transparent;
 	position: absolute;
 	left: -10px;
+	top: 14px;
+}
+
+.error_arrow_left {
+	border-left: 10px solid #b94a48;
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent;
+	position: absolute;
+	right: -10px;
 	top: 14px;
 }
 @media (min-width: 539px) {
